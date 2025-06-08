@@ -88,14 +88,13 @@
                                 <a href="{{ route('clientes.edit', $cliente) }}" class="btn btn-sm btn-warning">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('clientes.destroy', $cliente) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" 
-                                            onclick="return confirm('Tem certeza que deseja deletar o cliente?')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                <button type="button" 
+                                        class="btn btn-sm btn-danger delete-btn" 
+                                        data-id="{{ $cliente->id }}"
+                                        data-nome="{{ $cliente->nome }}"
+                                        data-url="{{ route('clientes.destroy', $cliente) }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                         @empty
@@ -119,7 +118,29 @@
 @section('scripts')
 <script>
 $(document).ready(function() {
-    // Select all functionality
+    $('.delete-btn').click(function() {
+        const id = $(this).data('id');
+        const nome = $(this).data('nome');
+        const url = `/clientes/${id}`;
+        
+        if (confirm(`Tem certeza que deseja deletar o cliente "${nome}"?`)) {
+            $.ajax({
+                url: url,
+                method: 'DELETE',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    location.reload();
+                },
+                error: function(xhr) {
+                    alert('Erro ao deletar cliente!');
+                    console.error(xhr);
+                }
+            });
+        }
+    });
+
     $('#select-all').change(function() {
         $('.item-checkbox').prop('checked', this.checked);
         toggleDeleteButton();
@@ -138,7 +159,6 @@ $(document).ready(function() {
         }
     }
     
-    // Bulk delete
     $('#delete-selected').click(function() {
         if (confirm('Tem certeza que deseja deletar os itens selecionados?')) {
             const ids = $('.item-checkbox:checked').map(function() {

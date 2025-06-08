@@ -13,8 +13,6 @@ Route::get('/', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Rotas de Clientes
-Route::post('/clientes/destroy/{id}', [ClienteController::class, 'destroy'])->name('clientes.destroy');
-
 Route::resource('clientes', ClienteController::class);
 Route::delete('clientes/destroy-multiple', [ClienteController::class, 'destroyMultiple'])
      ->name('clientes.destroy-multiple');

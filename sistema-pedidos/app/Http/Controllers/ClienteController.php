@@ -19,7 +19,8 @@ class ClienteController extends Controller
 
     public function create()
     {
-        return view('clientes.form');
+        $scenario = "create";
+        return view('clientes.form',compact( 'scenario'));
     }
 
     public function store(Request $request)
@@ -34,7 +35,7 @@ class ClienteController extends Controller
             'cep' => 'nullable|string|max:10'
         ]);
 
-        Cliente::form($request->all());
+        Cliente::create($request->all());
 
         return redirect()->route('clientes.index')
                         ->with('success', 'Cliente criado com sucesso!');
@@ -72,11 +73,30 @@ class ClienteController extends Controller
 
     public function destroy(Cliente $cliente)
     {
-        print_r($cliente);exit();
-        // $cliente->delete();
-
-        // return redirect()->route('clientes.index')
-        //                 ->with('success', 'Cliente deletado com sucesso!');
+        try {
+            $cliente->delete();
+            
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Cliente deletado com sucesso!'
+                ]);
+            }
+            
+            return redirect()->route('clientes.index')
+                           ->with('success', 'Cliente deletado com sucesso!');
+                           
+        } catch (\Exception $e) {
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erro ao deletar cliente!'
+                ], 500);
+            }
+            
+            return redirect()->route('clientes.index')
+                           ->with('error', 'Erro ao deletar cliente!');
+        }
     }
 
     public function destroyMultiple(Request $request)
