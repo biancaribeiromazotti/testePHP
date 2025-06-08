@@ -21,7 +21,7 @@
 
     <!-- Formulário -->
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-8 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-user"></i> Dados do Cliente</h5>
@@ -38,28 +38,16 @@
                                 </h6>
                             </div>
                             
-                            <div class="col-md-8 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label for="nome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
                                 <input type="text" 
                                        class="form-control @error('nome') is-invalid @enderror" 
                                        id="nome" 
                                        name="nome" 
-                                       value="{{ old('nome') }}" 
+                                       value="{{ ($scenario == 'view' || $scenario == 'edit') ? $cliente->nome : old('nome') }}"
+                                       <?php echo ($scenario == 'view') ? "disabled" : "";?>
                                        required>
                                 @error('nome')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="col-md-4 mb-3">
-                                <label for="cpf" class="form-label">CPF</label>
-                                <input type="text" 
-                                       class="form-control @error('cpf') is-invalid @enderror" 
-                                       id="cpf" 
-                                       name="cpf" 
-                                       value="{{ old('cpf') }}" 
-                                       placeholder="000.000.000-00">
-                                @error('cpf')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -70,7 +58,8 @@
                                        class="form-control @error('email') is-invalid @enderror" 
                                        id="email" 
                                        name="email" 
-                                       value="{{ old('email') }}" 
+                                       value="{{ ($scenario == 'view' || $scenario == 'edit') ? $cliente->email : old('email') }}" 
+                                       <?php echo ($scenario == 'view') ? "disabled" : "";?>
                                        required>
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -83,7 +72,8 @@
                                        class="form-control @error('telefone') is-invalid @enderror" 
                                        id="telefone" 
                                        name="telefone" 
-                                       value="{{ old('telefone') }}" 
+                                       value="{{ ($scenario == 'view' || $scenario == 'edit') ? $cliente->telefone : old('telefone') }}" 
+                                       <?php echo ($scenario == 'view') ? "disabled" : "";?>
                                        placeholder="(00) 00000-0000"
                                        required>
                                 @error('telefone')
@@ -100,46 +90,37 @@
                                 </h6>
                             </div>
                             
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-3 ">
                                 <label for="cep" class="form-label">CEP</label>
                                 <input type="text" 
                                        class="form-control @error('cep') is-invalid @enderror" 
                                        id="cep" 
                                        name="cep" 
-                                       value="{{ old('cep') }}" 
+                                       value="{{ ($scenario == 'view' || $scenario == 'edit') ? $cliente->cep : old('cep') }}" 
+                                       <?php echo ($scenario == 'view') ? "disabled" : "";?>
                                        placeholder="00000-000">
                                 @error('cep')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             
-                            <div class="col-md-12 mb-3">
-                                <label for="endereco" class="form-label">Endereço</label>
-                                <input type="text" 
-                                       class="form-control @error('endereco') is-invalid @enderror" 
-                                       id="endereco" 
-                                       name="endereco" 
-                                       value="{{ old('endereco') }}">
-                                @error('endereco')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-4 ">
                                 <label for="cidade" class="form-label">Cidade</label>
                                 <input type="text" 
                                        class="form-control @error('cidade') is-invalid @enderror" 
                                        id="cidade" 
                                        name="cidade" 
-                                       value="{{ old('cidade') }}">
+                                       value="{{($scenario == 'view' || $scenario == 'edit') ? $cliente->cidade :  old('cidade') }}"
+                                       <?php echo ($scenario == 'view') ? "disabled" : "";?>
+                                       >
                                 @error('cidade')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             
-                            <div class="col-md-2 mb-3">
+                            <div class="col-md-2 ">
                                 <label for="estado" class="form-label">Estado</label>
-                                <select class="form-select @error('estado') is-invalid @enderror" id="estado" name="estado">
+                                <select class="form-select @error('estado') is-invalid @enderror" id="estado" name="estado" <?php echo $scenario == 'view' ?'disabled':''?>>
                                     <option value="">UF</option>
                                     <option value="AC" {{ old('estado') == 'AC' ? 'selected' : '' }}>AC</option>
                                     <option value="AL" {{ old('estado') == 'AL' ? 'selected' : '' }}>AL</option>
@@ -175,19 +156,38 @@
                             </div>
                         </div>
 
-                        <!-- Botões -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="d-flex justify-content-between">
-                                    <a href="{{ route('clientes.index') }}" class="btn btn-secondary">
-                                        <i class="fas fa-times"></i> Cancelar
-                                    </a>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save"></i> Salvar Cliente
-                                    </button>
-                                </div>
+                        <div class="col-md-12 mb-3">
+                                <label for="endereco" class="form-label">Endereço</label>
+                                <input type="text" 
+                                       class="form-control @error('endereco') is-invalid @enderror" 
+                                       id="endereco" 
+                                       name="endereco" 
+                                       value="{{ ($scenario == 'view' || $scenario == 'edit') ? $cliente->endereco : old('endereco') }}"
+                                       <?php echo ($scenario == 'view') ? "disabled" : "";?>>
+                                @error('endereco')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                        </div>
+                        <?php
+                        if($scenario != "view")
+                        {
+                            ?>   
+                                <!-- Botões -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-between">
+                                            <a href="{{ route('clientes.index') }}" class="btn btn-secondary">
+                                                <i class="fas fa-times"></i> Cancelar
+                                            </a>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> Salvar Cliente
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                        }
+                        ?>
                     </form>
                 </div>
             </div>

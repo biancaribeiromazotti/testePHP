@@ -19,7 +19,7 @@ class ClienteController extends Controller
 
     public function create()
     {
-        return view('clientes.create');
+        return view('clientes.form');
     }
 
     public function store(Request $request)
@@ -34,7 +34,7 @@ class ClienteController extends Controller
             'cep' => 'nullable|string|max:10'
         ]);
 
-        Cliente::create($request->all());
+        Cliente::form($request->all());
 
         return redirect()->route('clientes.index')
                         ->with('success', 'Cliente criado com sucesso!');
@@ -42,12 +42,14 @@ class ClienteController extends Controller
 
     public function show(Cliente $cliente)
     {
-        return view('clientes.show', compact('cliente'));
+        $scenario = "view";
+        return view('clientes.form', compact('cliente', 'scenario'));
     }
 
     public function edit(Cliente $cliente)
     {
-        return view('clientes.edit', compact('cliente'));
+        $scenario = "edit";
+        return view('clientes.form', compact('cliente','scenario'));
     }
 
     public function update(Request $request, Cliente $cliente)
@@ -70,10 +72,11 @@ class ClienteController extends Controller
 
     public function destroy(Cliente $cliente)
     {
-        $cliente->delete();
+        print_r($cliente);exit();
+        // $cliente->delete();
 
-        return redirect()->route('clientes.index')
-                        ->with('success', 'Cliente deletado com sucesso!');
+        // return redirect()->route('clientes.index')
+        //                 ->with('success', 'Cliente deletado com sucesso!');
     }
 
     public function destroyMultiple(Request $request)

@@ -92,7 +92,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger" 
-                                            onclick="return confirm('Tem certeza?')">
+                                            onclick="return confirm('Tem certeza que deseja deletar o cliente?')">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
