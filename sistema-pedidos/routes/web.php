@@ -18,11 +18,11 @@ Route::delete('clientes/destroy-multiple', [ClienteController::class, 'destroyMu
 Route::resource('clientes', ClienteController::class);
 
 // Rotas de Produtos
-Route::resource('produtos', ProdutoController::class);
 Route::delete('produtos/destroy-multiple', [ProdutoController::class, 'destroyMultiple'])
      ->name('produtos.destroy-multiple');
+Route::resource('produtos', ProdutoController::class);
 
 // Rotas de Pedidos
-Route::resource('pedidos', PedidoController::class);
 Route::delete('pedidos/destroy-multiple', [PedidoController::class, 'destroyMultiple'])
      ->name('pedidos.destroy-multiple');
+Route::resource('pedidos', PedidoController::class);
