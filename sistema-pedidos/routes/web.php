@@ -13,9 +13,9 @@ Route::get('/', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Rotas de Clientes
-Route::resource('clientes', ClienteController::class);
 Route::delete('clientes/destroy-multiple', [ClienteController::class, 'destroyMultiple'])
      ->name('clientes.destroy-multiple');
+Route::resource('clientes', ClienteController::class);
 
 // Rotas de Produtos
 Route::resource('produtos', ProdutoController::class);
