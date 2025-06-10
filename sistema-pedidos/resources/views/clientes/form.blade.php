@@ -5,12 +5,28 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1><i class="fas fa-user-plus text-primary"></i> Novo Cliente</h1>
+            <h1><i class="fas fa-user-plus text-primary"></i> 
+                @if($scenario == 'edit')
+                    Editar Cliente
+                @elseif($scenario == 'view')
+                    Visualizar Cliente
+                @else
+                    Novo Cliente
+                @endif
+            </h1>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('clientes.index') }}">Clientes</a></li>
-                    <li class="breadcrumb-item active">Novo Cliente</li>
+                    <li class="breadcrumb-item active">
+                        @if($scenario == 'edit')
+                            Editar Cliente
+                        @elseif($scenario == 'view')
+                            Visualizar Cliente
+                        @else
+                            Novo Cliente
+                        @endif
+                    </li>
                 </ol>
             </nav>
         </div>
@@ -27,8 +43,11 @@
                     <h5 class="mb-0"><i class="fas fa-user"></i> Dados do Cliente</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('clientes.store') }}" method="POST" id="clienteForm">
+                    <form action="{{ $scenario == 'edit' ? route('clientes.update', $cliente->id) : route('clientes.store') }}" method="POST" id="clienteForm">
                         @csrf
+                        @if($scenario == 'edit')
+                            @method('PUT')
+                        @endif
                         
                         <!-- Dados Pessoais -->
                         <div class="row mb-4">
@@ -45,7 +64,7 @@
                                        id="nome" 
                                        name="nome" 
                                        value="{{ ($scenario == 'view' || $scenario == 'edit') ? $cliente->nome : old('nome') }}"
-                                       <?php echo ($scenario == 'view') ? "disabled" : "";?>
+                                       {{ $scenario == 'view' ? 'disabled' : '' }}
                                        required>
                                 @error('nome')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -59,7 +78,7 @@
                                        id="email" 
                                        name="email" 
                                        value="{{ ($scenario == 'view' || $scenario == 'edit') ? $cliente->email : old('email') }}" 
-                                       <?php echo ($scenario == 'view') ? "disabled" : "";?>
+                                       {{ $scenario == 'view' ? 'disabled' : '' }}
                                        required>
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -73,7 +92,7 @@
                                        id="telefone" 
                                        name="telefone" 
                                        value="{{ ($scenario == 'view' || $scenario == 'edit') ? $cliente->telefone : old('telefone') }}" 
-                                       <?php echo ($scenario == 'view') ? "disabled" : "";?>
+                                       {{ $scenario == 'view' ? 'disabled' : '' }}
                                        placeholder="(00) 00000-0000"
                                        required>
                                 @error('telefone')
@@ -90,104 +109,96 @@
                                 </h6>
                             </div>
                             
-                            <div class="col-md-3 ">
+                            <div class="col-md-3 mb-3">
                                 <label for="cep" class="form-label">CEP</label>
                                 <input type="text" 
                                        class="form-control @error('cep') is-invalid @enderror" 
                                        id="cep" 
                                        name="cep" 
                                        value="{{ ($scenario == 'view' || $scenario == 'edit') ? $cliente->cep : old('cep') }}" 
-                                       <?php echo ($scenario == 'view') ? "disabled" : "";?>
+                                       {{ $scenario == 'view' ? 'disabled' : '' }}
                                        placeholder="00000-000">
                                 @error('cep')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             
-                            <div class="col-md-4 ">
+                            <div class="col-md-4 mb-3">
                                 <label for="cidade" class="form-label">Cidade</label>
                                 <input type="text" 
                                        class="form-control @error('cidade') is-invalid @enderror" 
                                        id="cidade" 
                                        name="cidade" 
-                                       value="{{($scenario == 'view' || $scenario == 'edit') ? $cliente->cidade :  old('cidade') }}"
-                                       <?php echo ($scenario == 'view') ? "disabled" : "";?>
-                                       >
+                                       value="{{ ($scenario == 'view' || $scenario == 'edit') ? $cliente->cidade : old('cidade') }}"
+                                       {{ $scenario == 'view' ? 'disabled' : '' }}>
                                 @error('cidade')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             
-                            <div class="col-md-2 ">
+                            <div class="col-md-2 mb-3">
                                 <label for="estado" class="form-label">Estado</label>
-                                <select class="form-select @error('estado') is-invalid @enderror" id="estado" name="estado" <?php echo $scenario == 'view' ?'disabled':''?>>
+                                <select class="form-select @error('estado') is-invalid @enderror" 
+                                        id="estado" 
+                                        name="estado" 
+                                        {{ $scenario == 'view' ? 'disabled' : '' }}>
                                     <option value="">UF</option>
-                                    <option value="AC" {{ old('estado') == 'AC' ? 'selected' : '' }}>AC</option>
-                                    <option value="AL" {{ old('estado') == 'AL' ? 'selected' : '' }}>AL</option>
-                                    <option value="AP" {{ old('estado') == 'AP' ? 'selected' : '' }}>AP</option>
-                                    <option value="AM" {{ old('estado') == 'AM' ? 'selected' : '' }}>AM</option>
-                                    <option value="BA" {{ old('estado') == 'BA' ? 'selected' : '' }}>BA</option>
-                                    <option value="CE" {{ old('estado') == 'CE' ? 'selected' : '' }}>CE</option>
-                                    <option value="DF" {{ old('estado') == 'DF' ? 'selected' : '' }}>DF</option>
-                                    <option value="ES" {{ old('estado') == 'ES' ? 'selected' : '' }}>ES</option>
-                                    <option value="GO" {{ old('estado') == 'GO' ? 'selected' : '' }}>GO</option>
-                                    <option value="MA" {{ old('estado') == 'MA' ? 'selected' : '' }}>MA</option>
-                                    <option value="MT" {{ old('estado') == 'MT' ? 'selected' : '' }}>MT</option>
-                                    <option value="MS" {{ old('estado') == 'MS' ? 'selected' : '' }}>MS</option>
-                                    <option value="MG" {{ old('estado') == 'MG' ? 'selected' : '' }}>MG</option>
-                                    <option value="PA" {{ old('estado') == 'PA' ? 'selected' : '' }}>PA</option>
-                                    <option value="PB" {{ old('estado') == 'PB' ? 'selected' : '' }}>PB</option>
-                                    <option value="PR" {{ old('estado') == 'PR' ? 'selected' : '' }}>PR</option>
-                                    <option value="PE" {{ old('estado') == 'PE' ? 'selected' : '' }}>PE</option>
-                                    <option value="PI" {{ old('estado') == 'PI' ? 'selected' : '' }}>PI</option>
-                                    <option value="RJ" {{ old('estado') == 'RJ' ? 'selected' : '' }}>RJ</option>
-                                    <option value="RN" {{ old('estado') == 'RN' ? 'selected' : '' }}>RN</option>
-                                    <option value="RS" {{ old('estado') == 'RS' ? 'selected' : '' }}>RS</option>
-                                    <option value="RO" {{ old('estado') == 'RO' ? 'selected' : '' }}>RO</option>
-                                    <option value="RR" {{ old('estado') == 'RR' ? 'selected' : '' }}>RR</option>
-                                    <option value="SC" {{ old('estado') == 'SC' ? 'selected' : '' }}>SC</option>
-                                    <option value="SP" {{ old('estado') == 'SP' ? 'selected' : '' }}>SP</option>
-                                    <option value="SE" {{ old('estado') == 'SE' ? 'selected' : '' }}>SE</option>
-                                    <option value="TO" {{ old('estado') == 'TO' ? 'selected' : '' }}>TO</option>
+                                    @php
+                                        $selectedEstado = ($scenario == 'view' || $scenario == 'edit') ? $cliente->estado : old('estado');
+                                        $estados = [
+                                            'AC' => 'AC', 'AL' => 'AL', 'AP' => 'AP', 'AM' => 'AM', 'BA' => 'BA',
+                                            'CE' => 'CE', 'DF' => 'DF', 'ES' => 'ES', 'GO' => 'GO', 'MA' => 'MA',
+                                            'MT' => 'MT', 'MS' => 'MS', 'MG' => 'MG', 'PA' => 'PA', 'PB' => 'PB',
+                                            'PR' => 'PR', 'PE' => 'PE', 'PI' => 'PI', 'RJ' => 'RJ', 'RN' => 'RN',
+                                            'RS' => 'RS', 'RO' => 'RO', 'RR' => 'RR', 'SC' => 'SC', 'SP' => 'SP',
+                                            'SE' => 'SE', 'TO' => 'TO'
+                                        ];
+                                    @endphp
+                                    @foreach($estados as $sigla => $nome)
+                                        <option value="{{ $sigla }}" {{ $selectedEstado == $sigla ? 'selected' : '' }}>
+                                            {{ $sigla }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 @error('estado')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                        </div>
-
-                        <div class="col-md-12 mb-3">
+                            
+                            <div class="col-md-12 mb-3">
                                 <label for="endereco" class="form-label">Endereço</label>
                                 <input type="text" 
                                        class="form-control @error('endereco') is-invalid @enderror" 
                                        id="endereco" 
                                        name="endereco" 
                                        value="{{ ($scenario == 'view' || $scenario == 'edit') ? $cliente->endereco : old('endereco') }}"
-                                       <?php echo ($scenario == 'view') ? "disabled" : "";?>>
+                                       {{ $scenario == 'view' ? 'disabled' : '' }}>
                                 @error('endereco')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                        <?php
-                        if($scenario != "view")
-                        {
-                            ?>   
-                                <!-- Botões -->
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="d-flex justify-content-between">
-                                            <a href="{{ route('clientes.index') }}" class="btn btn-secondary">
-                                                <i class="fas fa-times"></i> Cancelar
-                                            </a>
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-save"></i> Salvar Cliente
-                                            </button>
-                                        </div>
+                        </div>
+
+                        @if($scenario != 'view')
+                            <!-- Botões -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between">
+                                        <a href="{{ route('clientes.index') }}" class="btn btn-secondary">
+                                            <i class="fas fa-times"></i> Cancelar
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> 
+                                            @if($scenario == 'edit')
+                                                Atualizar Cliente
+                                            @else
+                                                Salvar Cliente
+                                            @endif
+                                        </button>
                                     </div>
                                 </div>
-                            <?php
-                        }
-                        ?>
+                            </div>
+                        @endif
                     </form>
                 </div>
             </div>
@@ -228,7 +239,8 @@ $(document).ready(function() {
         this.value = value;
     });
 
-    // Buscar endereço pelo CEP
+    // Buscar endereço pelo CEP (apenas se não estiver no modo visualização)
+    @if($scenario != 'view')
     $('#cep').on('blur', function() {
         const cep = this.value.replace(/\D/g, '');
         if (cep.length === 8) {
@@ -254,9 +266,11 @@ $(document).ready(function() {
                 });
         }
     });
+    @endif
 
     // Validação do formulário
     $('#clienteForm').on('submit', function(e) {
+        @if($scenario != 'view')
         let isValid = true;
         
         // Validar campos obrigatórios
@@ -283,6 +297,7 @@ $(document).ready(function() {
             e.preventDefault();
             alert('Por favor, preencha todos os campos obrigatórios corretamente.');
         }
+        @endif
     });
 });
 </script>
