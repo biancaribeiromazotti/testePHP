@@ -53,11 +53,24 @@
                         <div class="row mb-4">
                             <div class="col-12">
                                 <h6 class="text-muted border-bottom pb-2 mb-3">
-                                    <i class="fas fa-info-circle"></i> Informações Básicas
+                                    <i class="fas fa-info-circle"></i> Dados do Produto
                                 </h6>
                             </div>
                             
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-4 mb-3">
+                                <label for="codigo" class="form-label">Código do Produto <span class="text-danger">*</span></label>
+                                <input type="text" 
+                                       class="form-control @error('codigo') is-invalid @enderror" 
+                                       id="codigo" 
+                                       name="codigo" 
+                                       value="{{ ($scenario == 'view' || $scenario == 'edit') ? $produto->codigo : old('codigo') }}"
+                                       {{ $scenario == 'view' ? 'disabled' : '' }}
+                                       required>
+                                @error('codigo')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-8 mb-3">
                                 <label for="nome" class="form-label">Nome do Produto <span class="text-danger">*</span></label>
                                 <input type="text" 
                                        class="form-control @error('nome') is-invalid @enderror" 
@@ -182,7 +195,7 @@ $(document).ready(function() {
         let isValid = true;
         
         // Validar campos obrigatórios
-        const requiredFields = ['nome', 'preco', 'estoque'];
+        const requiredFields = ['codigo','nome', 'preco', 'estoque'];
         requiredFields.forEach(field => {
             const element = $(`#${field}`);
             if (!element.val().trim()) {

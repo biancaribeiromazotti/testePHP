@@ -26,6 +26,7 @@ class ProdutoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'codigo' => 'required|string|max:50',
             'nome' => 'required|string|max:255',
             'descricao' => 'nullable|string',
             'preco' => 'required|numeric|min:0',
@@ -54,6 +55,7 @@ class ProdutoController extends Controller
     public function update(Request $request, Produto $produto)
     {
         $request->validate([
+            'codigo' => 'required|string|max:50',
             'nome' => 'required|string|max:255',
             'descricao' => 'nullable|string',
             'preco' => 'required|numeric|min:0',

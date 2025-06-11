@@ -2,13 +2,13 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="fas fa-users"></i> Produtos</h2>
+    <h2><i class="fas fa-users"></i> Pedidos</h2>
     <div>
         <button class="btn btn-danger" id="delete-selected" style="display: none;">
             <i class="fas fa-trash"></i> Deletar Selecionados
         </button>
-        <a href="{{ route('produtos.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Novo Produto
+        <a href="{{ route('pedidos.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Novo Pedido
         </a>
     </div>
 </div>
@@ -16,17 +16,17 @@
 <!-- Filtros -->
 <div class="card mb-4">
     <div class="card-body">
-        <form method="GET" action="{{ route('produtos.index') }}" class="row g-3">
+        <form method="GET" action="{{ route('pedidos.index') }}" class="row g-3">
             <div class="col-md-4">
                 <input type="text" class="form-control" name="search" 
-                       placeholder="Buscar por nome ou código..." 
+                       placeholder="Buscar por codigo ..." 
                        value="{{ request('search') }}">
             </div>
             <div class="col-md-3">
                 <select name="sort_by" class="form-select">
                     <option value="">Ordenar por...</option>
                     <option value="codigo" {{ request('sort_by') == 'codigo' ? 'selected' : '' }}>Código</option>
-                    <option value="nome" {{ request('sort_by') == 'nome' ? 'selected' : '' }}>Nome</option>
+                    <!-- <option value="email" {{ request('sort_by') == 'email' ? 'selected' : '' }}>Email</option> -->
                     <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : '' }}>Data Cadastro</option>
                 </select>
             </div>
@@ -65,44 +65,42 @@
                                 <input type="checkbox" id="select-all">
                             </th>
                             <th>Código</th>
-                            <th>Nome</th>
-                            <th>Descrição</th>
-                            <th>Preço</th>
-                            <th>Estoque</th>
-                            <th>Categoria</th>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th>Valor Final</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($produtos as $produto)
+                        @forelse($pedidos as $pedido)
                         <tr>
                             <td>
-                                <input type="checkbox" name="ids[]" value="{{ $produto->id }}" class="item-checkbox">
+                                <input type="checkbox" name="ids[]" value="{{ $pedido->id }}" class="item-checkbox">
                             </td>
-                            <td>{{ $produto->codigo }}</td>
-                            <td>{{ $produto->nome }}</td>
-                            <td>{{ $produto->descricao }}</td>
-                            <td>{{ $produto->preco }}</td>
-                            <td>{{ $produto->estoque }}</td>
-                            <td>{{ $produto->categoria ?? '-' }}</td>
+                            <td>{{ $pedido->codigo }}</td>
+                            <td>{{ $pedido->data_pedido }}</td>
+                            <td>{{ $pedido->cliente->nome }}</td>
+                            <td>{{ $pedido->total }}</td>
+                            <td>{{ $pedido->status}}</td>
                             <td>
-                                <a href="{{ route('produtos.show', $produto) }}" class="btn btn-sm btn-info">
+                                <a href="{{ route('pedidos.show', $pedido) }}" class="btn btn-sm btn-info">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('produtos.edit', $produto) }}" class="btn btn-sm btn-warning">
+                                <a href="{{ route('pedidos.edit', $pedido) }}" class="btn btn-sm btn-warning">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <button type="button" 
                                         class="btn btn-sm btn-danger delete-btn" 
-                                        data-id="{{ $produto->id }}"
-                                        data-nome="{{ $produto->nome }}"
-                                        data-url="{{ route('produtos.destroy', $produto) }}">
+                                        data-id="{{ $pedido->id }}"
+                                        data-codigo="{{ $pedido->codigo }}"
+                                        data-url="{{ route('pedidos.destroy', $pedido) }}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center">Nenhum produto encontrado.</td>
+                            <td colspan="6" class="text-center">Nenhum pedido encontrado.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -114,7 +112,7 @@
 
 <!-- Paginação -->
 <div class="d-flex justify-content-center mt-4">
-    {{ $produtos->appends(request()->query())->links() }}
+    {{ $pedidos->appends(request()->query())->links() }}
 </div>
 @endsection
 
@@ -123,10 +121,10 @@
 $(document).ready(function() {
     $('.delete-btn').click(function() {
         const id = $(this).data('id');
-        const nome = $(this).data('nome');
-        const url = `/produtos/${id}`;
+        const codigo = $(this).data('codigo');
+        const url = `/pedidos/${id}`;
         
-        if (confirm(`Tem certeza que deseja deletar o produto "${nome}"?`)) {
+        if (confirm(`Tem certeza que deseja deletar o pedido "${codigo}"?`)) {
             $.ajax({
                 url: url,
                 method: 'DELETE',
@@ -137,7 +135,7 @@ $(document).ready(function() {
                     location.reload();
                 },
                 error: function(xhr) {
-                    alert('Erro ao deletar produto!');
+                    alert('Erro ao deletar pedido!');
                     console.error(xhr);
                 }
             });
@@ -169,7 +167,7 @@ $(document).ready(function() {
             }).get();
             
             $.ajax({
-                url: '{{ route("produtos.destroy-multiple") }}',
+                url: '{{ route("pedidos.destroy-multiple") }}',
                 method: 'DELETE',
                 data: {
                     ids: ids,

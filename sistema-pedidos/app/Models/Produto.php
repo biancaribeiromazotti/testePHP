@@ -10,6 +10,7 @@ class Produto extends Model
     use HasFactory;
 
     protected $fillable = [
+        'codigo',
         'nome',
         'descricao',
         'preco',
@@ -33,6 +34,7 @@ class Produto extends Model
         if (isset($filters['search'])) {
             $query->where(function($q) use ($filters) {
                 $q->where('nome', 'like', '%' . $filters['search'] . '%')
+                  ->orWhere('codigo', 'like', '%' . $filters['search'] . '%')
                   ->orWhere('categoria', 'like', '%' . $filters['search'] . '%');
             });
         }
